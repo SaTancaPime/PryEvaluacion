@@ -1,12 +1,60 @@
 let fechasSeleccionadas = [];
 let flatpickrInstance = null;
-            
+   
+// Función para generar fechas futuras
+function generarFechasFuturas() {
+    const fechasFuturas = [];
+    const fechaActual = new Date();
+    for (let i = 0; i < 7; i++) {
+        const fecha = new Date(fechaActual);
+        fecha.setDate(fechaActual.getDate() + i);
+        fechasFuturas.push(fecha);
+    }
+    return fechasFuturas;
+}
+
+// Convertir fechas String a formato Date
+function convertirFechasStringADate(fechasString) {
+    return fechasString.map(fechaStr => {
+        const fecha = new Date(fechaStr);
+        fecha.setHours(0, 0, 0, 0);
+        return fecha;
+    });
+}
+
+// Combinar fechas pasadas y futuras
+function combinarFechasHabilitadas(fechasBD = []) {
+    const fechasFuturas = generarFechasFuturas();
+    let fechasCombinadas = [...fechasFuturas]; // Empezar con fechas futuras
+    
+    console.log('Fechas futuras generadas:', fechasFuturas.map(f => f.toLocaleDateString('es-ES')));
+    
+    // Si hay fechas de la BD, convertirlas y agregarlas
+    if (fechasBD && fechasBD.length > 0) {
+        const fechasBDConvertidas = convertirFechasStringADate(fechasBD);
+        console.log('Fechas BD convertidas:', fechasBDConvertidas.map(f => f.toLocaleDateString('es-ES')));
+        fechasCombinadas = [...fechasCombinadas, ...fechasBDConvertidas];
+    }
+    
+    // Eliminar duplicados y ordenar
+    const fechasUnicas = fechasCombinadas.filter((fecha, index, array) => {
+        return array.findIndex(f => f.getTime() === fecha.getTime()) === index;
+    });
+    
+    const fechasOrdenadas = fechasUnicas.sort((a, b) => a - b);
+    console.log('Fechas finales habilitadas:', fechasOrdenadas.map(f => f.toLocaleDateString('es-ES')));
+    
+    return fechasOrdenadas;
+}
+
 // Configuración del datepicker con Flatpickr
-function inicializarFlatpickr(fechasHabilitadas = []) {
+function inicializarFlatpickr(fechasBD = []) {
     // Si ya existe una instancia, la destruimos
     if (flatpickrInstance) {
         flatpickrInstance.destroy();
     }
+
+    const fechasHabilitadas = combinarFechasHabilitadas(fechasBD);
     
     flatpickrInstance = flatpickr("#fechas-justificar-input", {
         mode: "single", // Modo single para seleccionar una fecha a la vez

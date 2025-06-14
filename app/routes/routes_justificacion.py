@@ -61,7 +61,7 @@ def justificacion_empleado():
                 return redirect(url_for('justificacion_bp.justificacion_empleado'))
             
             # Buscar empleado
-            id_empleado = ControlJustificacion.buscar_empleado(tipo_doc_empleado, nro_doc_empleado)
+            id_empleado = ControlEmpleado.buscar_empleado(tipo_doc_empleado, nro_doc_empleado)
             if id_empleado == -1:
                 flash('El empleado con el documento proporcionado no existe en el sistema.', 'error')
                 return redirect(url_for('justificacion_bp.justificacion_empleado'))
