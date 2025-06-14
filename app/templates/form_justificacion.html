@@ -1,0 +1,193 @@
+{% extends "plantilla.html" %}
+{% block title %}Formulario de Justificaciones{% endblock title %}
+
+{% block header_title %}
+Registra tu justificación <span class="text-[#FF0000]">...</span>
+{% endblock header_title %}
+
+{% block description %}
+Por favor, completa los detalles de tu justificación para que podamos gestionar tu tiempo de trabajo.
+{% endblock description %}
+
+{% block main_content %}
+
+        <section class="relative z-10 -mt-10 p-6 space-y-6 max-w-5xl mx-auto bg-white text-[#0F2343] rounded-t-2xl shadow-lg">
+            
+            <!-- Mensajes Flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message mb-4 p-4 rounded-lg border-l-4 {% if category == 'error' %}bg-red-50 border-red-400 text-red-700{% elif category == 'success' %}bg-green-50 border-green-400 text-green-700{% elif category == 'warning' %}bg-yellow-50 border-yellow-400 text-yellow-700{% else %}bg-blue-50 border-blue-400 text-blue-700{% endif %}" role="alert">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    {% if category == 'error' %}
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    {% elif category == 'success' %}
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    {% elif category == 'warning' %}
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                    {% else %}
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                        </svg>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium">{{ message }}</p>
+                                </div>
+                                <div class="ml-auto pl-3">
+                                    <button type="button" class="flash-close inline-flex rounded-md p-1.5 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2" onclick="this.parentElement.parentElement.parentElement.style.display='none'">
+                                        <span class="sr-only">Cerrar</span>
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <h1 class="text-xl font-bold">Detalles de la Justificación</h1>
+
+            <form class="max-w-3xl mx-auto" action="" method="POST" enctype="multipart/form-data">
+                
+                <!-- Tipo de Documento -->
+                <div class="mb-5">
+                    <label for="tipo-doc-empleado-justificado" class="block mb-2 text-sm font-medium text-[#0F2343]">Tipo de Documento</label>
+                    <div class="flex">
+                        {% for tipo_doc in tipos_doc %}
+                        <div class="flex items-center me-4">
+                            <input id="tipo-doc-{{ tipo_doc[1] }}" type="radio" value="{{ tipo_doc[0] }}" name="tipo-documento-empleado" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" required>
+                            <label for="tipo-doc-{{ tipo_doc[1] }}" class="ms-2 text-sm font-medium text-[#949BA6]">{{ tipo_doc[1] }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Número de Documento -->
+                <div class="mb-5">
+                    <label for="num-documento-empleado" class="block mb-2 text-sm font-medium text-[#0F2343]">Número de documento</label>
+                    <input type="number" id="num-documento-empleado" name="num-documento-empleado" class="bg-gray-50 border border-gray-300 text-[#0F2343] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+                </div>
+
+                <!-- Tipo de Evento (Tardanza, Inasistencia) -->
+                <div class="mb-5">
+                    <label for="evento" class="block mb-2 text-sm font-medium text-[#0F2343]">Seleccione una opción</label>
+                    <ul class="grid w-full gap-6 md:grid-cols-2">
+                        <li>
+                            <input type="radio" id="tardanza" name="tipo-evento" value="2" class="hidden peer" required />
+                            <label for="tardanza" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                                <div class="block">
+                                    <div class="w-full">Tardanza</div>
+                                </div>
+                                <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                </svg>
+                            </label>
+                        </li>
+                        <li>
+                            <input type="radio" id="justificacion" name="tipo-evento" value="3" class="hidden peer" required />
+                            <label for="justificacion" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                                <div class="block">
+                                    <div class="w-full">Inasistencia</div>
+                                </div>
+                                <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                </svg>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tipo de Justificación -->
+                <div class="mb-5">
+                    <label for="tipo-justificacion" class="block mb-2 text-sm font-medium text-[#0F2343]">Tipo de Justificación</label>
+                    <select id="tipo-justificacion" name="tipo-justificacion" class="bg-gray-50 border border-gray-300 text-[#0F2343] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        <option selected disabled>Seleccionar Tipo---</option>
+                        {% for tipo_justificacion in tipos_justificacion %}
+                        <option value="{{ tipo_justificacion[0] }}">{{ tipo_justificacion[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Fechas a Justificar -->
+                <div class="mb-5">
+                    <label for="fechas-justificar-input" class="block mb-2 text-sm font-medium text-[#0F2343]">Fechas a Justificar</label>
+                    <div class="relative max-w-sm">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                            </svg>
+                        </div>
+                        <input 
+                            id="fechas-justificar-input" 
+                            name="fechaSelector" 
+                            type="text" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" 
+                            placeholder="Seleccionar Fechas---" 
+                            readonly
+                            required>
+                    </div>
+
+                    <!-- Container para las fechas seleccionadas -->
+                    <div id="fechas-seleccionadas-container" class="mt-3 min-h-[40px]">
+                        <div id="fechas-seleccionadas-list" class="flex flex-wrap gap-2">
+                            <!-- Las fechas aparecerán aquí dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Input hidden para enviar al backend -->
+                    <input 
+                        type="hidden" 
+                        id="fechas-justificar-hidden" 
+                        name="fechasJustificar" 
+                        value="">
+                </div>
+
+                <!-- Detalles Escritos -->
+                <div class="mb-5">
+                    <label for="detalles" class="block mb-2 text-sm font-medium text-[#0F2343]">Detalles Escritos</label>
+                    <textarea id="detalles" name="detalles-justificacion" rows="4" class="block p-2.5 w-full text-sm text-[#0F2343] bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+                </div>
+
+                <!-- Evidencias Fotográficas -->
+                <div class="mb-5">
+                    <label for="evidencia" class="block mb-2 text-sm font-medium text-[#0F2343]">Evidencia</label>
+                    <input class="block w-full text-sm text-[#0F2343] border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" aria-describedby="user_avatar_help" id="evidencia" name="evidencia" type="file" required>
+                </div>
+
+                <button type="submit" class="text-white bg-[#0F2343] hover:bg-[#364153] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Enviar</button>
+            </form>
+        </section>
+
+{% endblock main_content %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/validacion_fechas.js') }}"></script>
+
+<!-- Script para auto-ocultar mensajes flash después de 6 segundos -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(function(message) {
+        // Auto-ocultar después de 6 segundos
+        setTimeout(function() {
+            if (message.style.display !== 'none') {
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.style.display = 'none';
+                }, 300);
+            }
+        }, 6000);
+    });
+});
+</script>
+{% endblock scripts %}

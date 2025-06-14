@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.controllers.control_incidente import ControlIncidente
 from app.controllers.control_empleado import ControlEmpleado
 from app.controllers.control_tipo_doc import ControlTipoDoc
-from app.controllers.control_cliente import ControlCliente
 from app.controllers.control_sucursal import ControlSucursal
 from app.controllers.control_area import ControlArea
 from app.services.service_cliente import ClienteService
