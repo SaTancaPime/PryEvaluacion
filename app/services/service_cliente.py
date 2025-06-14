@@ -19,21 +19,16 @@ class ClienteService:
                 tipo_doc_nombre = 'cee'
             elif id_tipo_doc == 3:
                 tipo_doc_nombre = 'ruc'
-                
             else:
-                # logging.warning(f"Tipo de documento no soportado: {tipo_doc}")
-                print(f"Tipo de documento no soportado: {id_tipo_doc}")
                 return None
             
             url = f"https://api.factiliza.com/v1/{tipo_doc_nombre}/info/{nro_doc}"
             token = os.getenv('FACTILIZA_API_TOKEN')
             if not token:
-                # logging.error("Token de API no configurado en .env")
                 print("Token de API no configurado en .env")
                 return None
             
             headers = {"Authorization": f"Bearer {token}"}
-            
             response = requests.request("GET", url, headers=headers)
             
             if response.status_code == 200:
@@ -59,30 +54,27 @@ class ClienteService:
                         'tipo_doc': id_tipo_doc
                     }
             elif response.status == 404:
-                # logging.info(f"Documento no encontrado en API: {nro_doc}")
                 print(f"Documento no encontrado: {nro_doc}")
                 return None
             else:
-                # logging.error(f"Error en API: {response.status} - {response.message}")
                 print(f"Error en API: {response.status} - {response.message}")
                 return None
                 
         except requests.exceptions.Timeout:
-            logging.error("Timeout al consultar API externa")
+            print("Timeout al consultar API externa")
             return None
         except requests.exceptions.RequestException as e:
-            logging.error(f"Error de conexión con API: {str(e)}")
+            print(f"Error de conexión con API: {str(e)}")
             return None
         except Exception as e:
-            logging.error(f"Error inesperado al validar documento: {str(e)}")
+            print(f"Error inesperado al validar documento: {str(e)}")
             return None
 
     @staticmethod
     def obtener_o_crear_cliente(id_tipo_doc, nro_doc):
         try:
-            # 1. Buscar cliente en BD
-            cliente_existente = ControlIncidente.buscar_cliente(id_tipo_doc, nro_doc)
-            
+            # Buscar si el cliente existe en la BD
+            cliente_existente = ControlCliente.buscar_cliente(id_tipo_doc, nro_doc)
             if cliente_existente not in (0, -1):
                 return {
                     'success': True,
@@ -91,9 +83,8 @@ class ClienteService:
                     'es_nuevo': False
                 }
             
-            # 2. Validar documento con API externa
+            # Si no existe el cliente, validar documento con la API
             info_api = ClienteService.validar_documento_api(id_tipo_doc, nro_doc)
-            
             if not info_api:
                 return {
                     'success': False,
@@ -102,13 +93,8 @@ class ClienteService:
                     'es_nuevo': False
                 }
             
-            # 3. Registrar nuevo cliente
-            cliente_id = ControlIncidente.registrar_cliente(
-                id_tipo_doc, 
-                nro_doc, 
-                info_api['nombre'].strip()
-            )
-            
+            # Si el documento es válido, registrar el nuevo cliente
+            cliente_id = ControlCliente.registrar_cliente(id_tipo_doc, nro_doc, info_api['nombre'].strip())
             if cliente_id not in (0, -1):
                 return {
                     'success': True,
@@ -125,7 +111,6 @@ class ClienteService:
                 }
                 
         except Exception as e:
-            logging.error(f"Error en obtener_o_crear_cliente: {str(e)}")
             return {
                 'success': False,
                 'cliente_id': None,

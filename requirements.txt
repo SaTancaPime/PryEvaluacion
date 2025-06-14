@@ -2,3 +2,6 @@ Flask
 python-decouple
 psycopg2
 qrcode[pil]
+requests
+python-dotenv
+dropbox
