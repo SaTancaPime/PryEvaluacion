@@ -46,14 +46,8 @@ def asistencia_empleados():
             # Obtener hora actual
             hora_actual = datetime.now().strftime('%H:%M:%S')
             
-            # Debug: puedes comentar esta línea en producción
-            print(f"Empleado encontrado: {id_empleado}, Hora: {hora_actual}")
-            
             # Registrar asistencia
-            # Nota: En tu código hay horas hardcodeadas para testing, las voy a cambiar por hora_actual
             resultado_asistencia = ControlAsistencia.registrar_asistencia(id_empleado, hora_actual)
-            
-            # Procesar diferentes códigos de resultado según tu función SQL
             if resultado_asistencia == 1:
                 flash('¡Entrada registrada exitosamente! Asistencia puntual.', 'success')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
