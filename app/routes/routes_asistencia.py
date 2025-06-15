@@ -49,28 +49,40 @@ def asistencia_empleados():
             # Registrar asistencia
             resultado_asistencia = ControlAsistencia.registrar_asistencia(id_empleado, hora_actual)
             if resultado_asistencia == 1:
-                flash('¡Entrada registrada exitosamente! Asistencia puntual.', 'success')
+                flash('¡Entrada registrada exitosamente! Asistencia presente.', 'success')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
             elif resultado_asistencia == 2:
                 flash('Entrada registrada con tardanza. Recuerde ser más puntual.', 'warning')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
             elif resultado_asistencia == 4:
-                flash('¡Salida registrada exitosamente! Salida temprana registrada.', 'success')
+                flash('¡Salida temprana registrada exitosamente!', 'success')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
             elif resultado_asistencia == 5:
-                flash('¡Salida registrada exitosamente! Jornada completa.', 'success')
+                flash('¡Salida registrada exitosamente! Horario normal cumplido.', 'success')
+                return redirect(url_for('asistencia_bp.asistencia_empleados'))
+            elif resultado_asistencia == 6:
+                flash('Salida registrada fuera del horario ideal, pero dentro del rango permitido.', 'warning')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
             elif resultado_asistencia == 7:
                 flash('Registro de asistencia automático creado. Marque su entrada en el horario correspondiente.', 'info')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
-            elif resultado_asistencia == 3:
-                flash('La hora de entrada está fuera del rango permitido (09:40 - 10:00).', 'error')
-                return redirect(url_for('asistencia_bp.asistencia_empleados'))
-            elif resultado_asistencia == 6:
-                flash('La hora de salida está fuera del rango permitido (17:00 - 18:10).', 'error')
-                return redirect(url_for('asistencia_bp.asistencia_empleados'))
             elif resultado_asistencia == 8:
                 flash('Ya ha registrado su entrada y salida para el día de hoy.', 'warning')
+                return redirect(url_for('asistencia_bp.asistencia_empleados'))
+            elif resultado_asistencia == 9:
+                flash('La hora de salida está fuera del rango permitido (16:30 - 18:00).', 'error')
+                return redirect(url_for('asistencia_bp.asistencia_empleados'))
+            elif resultado_asistencia == 10:
+                flash('Hora de entrada actualizada para registro previamente justificado.', 'info')
+                return redirect(url_for('asistencia_bp.asistencia_empleados'))
+            elif resultado_asistencia == 11:
+                flash('Hora de salida actualizada para registro previamente justificado.', 'info')
+                return redirect(url_for('asistencia_bp.asistencia_empleados'))
+            elif resultado_asistencia == 12:
+                flash('No se puede marcar salida sin haber registrado una entrada válida o justificada.', 'error')
+                return redirect(url_for('asistencia_bp.asistencia_empleados'))
+            elif resultado_asistencia == 3:
+                flash('La hora de entrada está fuera del rango permitido (09:40 - 12:00).', 'error')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
             else:
                 flash(f'Código de respuesta no reconocido: {resultado_asistencia}. Contacte al administrador.', 'error')
