@@ -86,7 +86,7 @@ def encuesta(id_encuesta):
                     flash('Error al guardar la encuesta. Por favor, intente nuevamente.', 'error')
                     return redirect(url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta))
                 
-                return redirect(url_for('encuesta_bp.index'))
+                return redirect(url_for('encuesta_bp.exito_encuesta', id_encuesta=id_encuesta))
                 
         except Exception as e:
             flash('Error inesperado al procesar la encuesta. Por favor, intente nuevamente.', 'error')
@@ -125,3 +125,17 @@ def generar_qr_encuesta(id_encuesta):
     except Exception as e:
         flash(f'Error al generar el código QR: {str(e)}', 'error')
         return redirect(url_for('encuesta_bp.index'))
+    
+
+@encuesta_bp.route('/exito-encuesta/<int:id_encuesta>')
+def exito_encuesta(id_encuesta):
+    try:
+        encuesta = ControlEncuesta.obtener_encuesta(id_encuesta)
+        if not encuesta:
+            flash('La encuesta solicitada no existe o no está disponible.', 'error')
+            return redirect(url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta))
+            
+        return render_template('agrad_encuesta.html', encuesta=encuesta)
+    except Exception as e:
+        flash('Error al cargar la encuesta. Por favor, intente nuevamente.', 'error')
+        return redirect(url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta))   
