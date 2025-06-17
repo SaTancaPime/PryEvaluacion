@@ -22,6 +22,27 @@ function convertirFechasStringADate(fechasString) {
     });
 }
 
+// Función para convertir fecha de dd/mm/yyyy a yyyy-mm-dd
+function convertirFechaAFormatoISO(fechaStr) {
+    const partes = fechaStr.split('/');
+    if (partes.length === 3) {
+        const dia = partes[0].padStart(2, '0');
+        const mes = partes[1].padStart(2, '0');
+        const año = partes[2];
+        return `${año}-${mes}-${dia}`;
+    }
+    return fechaStr;
+}
+
+// Función para convertir fecha de yyyy-mm-dd a dd/mm/yyyy
+function convertirFechaAFormatoDisplay(fechaISO) {
+    const fecha = new Date(fechaISO);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const año = fecha.getFullYear();
+    return `${dia}/${mes}/${año}`;
+}
+
 // Combinar fechas pasadas y futuras
 function combinarFechasHabilitadas(fechasBD = []) {
     const fechasFuturas = generarFechasFuturas();
@@ -124,7 +145,6 @@ async function manejarCambioTipoEvento() {
     }
 }
 
-
 // Función para agregar una fecha
 function agregarFecha(fechaStr) {
     // Verificar si la fecha ya está seleccionada
@@ -179,10 +199,12 @@ function actualizarDisplayFechas() {
     }
 }
             
-// Función para actualizar el input hidden
+// Función para actualizar el input hidden - CORREGIDA
 function actualizarInputHidden() {
     const hiddenInput = document.getElementById('fechas-justificar-hidden');
-    hiddenInput.value = fechasSeleccionadas.join(', ');
+    // Convertir todas las fechas a formato ISO antes de enviarlas
+    const fechasISO = fechasSeleccionadas.map(fecha => convertirFechaAFormatoISO(fecha));
+    hiddenInput.value = fechasISO.join(', ');
 }
             
 // Función para actualizar la validación del formulario
@@ -196,10 +218,6 @@ function actualizarValidacionFormulario() {
         inputVisible.setCustomValidity('Debe seleccionar al menos una fecha');
     }
 }
-
-// Inicializar la vista
-// actualizarDisplayFechas();
-// actualizarValidacionFormulario();
 
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar Flatpickr sin fechas específicas

@@ -1,4 +1,5 @@
 from app.database.db import get_connection
+from datetime import datetime
 
 class ControlJustificacion:
     @staticmethod
@@ -60,17 +61,41 @@ class ControlJustificacion:
             
             # Insertar detalles de justificación
             sql_asistencia = """
-                select id_asistencia from asistencia where id_empleado = %s and fecha = %s
+                select id_asistencia from asistencia where id_empleado = %s and fecha = %s::date
             """
             
             sql_detalle = """
                 insert into justificacion_detalle (id_justificacion, id_asistencia, fecha) 
-	            values (%s, %s, %s)
+	            values (%s, %s, %s::date)
             """
-            for fecha in fechas:
-                cursor.execute(sql_asistencia, (id_empleado, fecha))
-                id_asistencia = cursor.fetchone()[0]
-                cursor.execute(sql_detalle, (id_justificacion, id_asistencia, fecha))
+            
+            for fecha_str in fechas:
+                # Limpiar la fecha de espacios en blanco
+                fecha_str = fecha_str.strip()
+                
+                # Verificar si la fecha ya está en formato ISO (yyyy-mm-dd)
+                try:
+                    # Intentar parsear como ISO primero
+                    fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d')
+                    fecha_iso = fecha_str
+                except ValueError:
+                    try:
+                        # Si falla, intentar parsear como dd/mm/yyyy
+                        fecha_obj = datetime.strptime(fecha_str, '%d/%m/%Y')
+                        fecha_iso = fecha_obj.strftime('%Y-%m-%d')
+                    except ValueError:
+                        print(f"Error: Formato de fecha no válido: {fecha_str}")
+                        continue
+                
+                # Buscar la asistencia correspondiente
+                cursor.execute(sql_asistencia, (id_empleado, fecha_iso))
+                resultado_asistencia = cursor.fetchone()
+                
+                if resultado_asistencia:
+                    id_asistencia = resultado_asistencia[0]
+                    cursor.execute(sql_detalle, (id_justificacion, id_asistencia, fecha_iso))
+                else:
+                    print(f"Advertencia: No se encontró registro de asistencia para empleado {id_empleado} en fecha {fecha_iso}")
                 
             conexion.commit()
             return 1
@@ -79,4 +104,5 @@ class ControlJustificacion:
             print(f"Error al agregar justificacion: {e}")
             return None
         finally:
-            conexion.close()    
+            if conexion:
+                conexion.close()

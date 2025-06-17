@@ -3,6 +3,7 @@ from app.controllers.control_justificacion import ControlJustificacion
 from app.controllers.control_empleado import ControlEmpleado
 from app.controllers.control_tipo_doc import ControlTipoDoc
 from app.services.service_dropbox import DropboxService
+from datetime import datetime
 
 justificacion_bp = Blueprint('justificacion_bp', __name__)
 
@@ -28,6 +29,42 @@ def obtener_fechas(id_empleado, evento):
         rpta['message'] = 'No se encontraron fechas para el evento solicitado'
     
     return jsonify(rpta)
+
+def procesar_fechas_justificacion(fechas_str):
+    """
+    Procesa la cadena de fechas y las convierte al formato correcto
+    """
+    if not fechas_str:
+        return []
+    
+    fechas_lista = []
+    fechas_raw = fechas_str.split(', ')
+    
+    for fecha_str in fechas_raw:
+        fecha_str = fecha_str.strip()
+        if not fecha_str:
+            continue
+            
+        # Verificar si ya está en formato ISO (yyyy-mm-dd)
+        if len(fecha_str) == 10 and fecha_str.count('-') == 2:
+            try:
+                # Validar que sea una fecha válida en formato ISO
+                datetime.strptime(fecha_str, '%Y-%m-%d')
+                fechas_lista.append(fecha_str)
+                continue
+            except ValueError:
+                pass
+        
+        # Si no está en formato ISO, intentar convertir desde dd/mm/yyyy
+        try:
+            fecha_obj = datetime.strptime(fecha_str, '%d/%m/%Y')
+            fecha_iso = fecha_obj.strftime('%Y-%m-%d')
+            fechas_lista.append(fecha_iso)
+        except ValueError:
+            print(f"Error: No se pudo procesar la fecha: {fecha_str}")
+            continue
+    
+    return fechas_lista
 
 @justificacion_bp.route('/justificacion-empleado', methods=['GET', 'POST'])
 def justificacion_empleado():
@@ -104,17 +141,21 @@ def justificacion_empleado():
                 flash('Debe seleccionar un tipo de justificación.', 'error')
                 return redirect(url_for('justificacion_bp.justificacion_empleado'))
             
-            fechas = request.form.get('fechasJustificar')
-            if not fechas:
+            fechas_str = request.form.get('fechasJustificar')
+            if not fechas_str:
                 flash('Debe seleccionar al menos una fecha para justificar.', 'error')
                 return redirect(url_for('justificacion_bp.justificacion_empleado'))
             
-            fechas_iterable = fechas.split(', ') if fechas else []
+            # Procesar las fechas correctamente
+            fechas_iterable = procesar_fechas_justificacion(fechas_str)
             if not fechas_iterable:
                 flash('No se encontraron fechas válidas para justificar.', 'error')
                 return redirect(url_for('justificacion_bp.justificacion_empleado'))
             
             detalle = request.form.get('detalles-justificacion')
+            
+            # Debug: Imprimir las fechas procesadas
+            print(f"Fechas procesadas para BD: {fechas_iterable}")
             
             # Procesar justificación
             resultado = ControlJustificacion.agregar_justificacion(
