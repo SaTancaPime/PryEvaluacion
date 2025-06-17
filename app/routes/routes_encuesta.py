@@ -69,7 +69,7 @@ def encuesta(id_encuesta):
                 else:
                     resultado_encuesta = ControlEncuesta.guardar_encuesta_empleado(id_encuesta, id_empleado, promedio)
                     
-                    if resultado_encuesta:
+                    if resultado_encuesta == 0:
                         flash('¡Encuesta enviada exitosamente! Gracias por su participación.', 'success')
                     else:
                         flash('Error al guardar la encuesta. Por favor, intente nuevamente.', 'error')

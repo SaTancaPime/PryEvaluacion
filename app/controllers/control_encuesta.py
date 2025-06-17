@@ -1,4 +1,5 @@
 from app.database.db import get_connection
+from decimal import Decimal
 
 class ControlEncuesta:
     # Métodos para el menú de encuestas
@@ -144,45 +145,143 @@ class ControlEncuesta:
     # Métodos para guardar encuestas (cliente y empleado)
     @staticmethod
     def guardar_encuesta_cliente(id_evaluacion, puntaje):
+        conexion = get_connection()
+        cursor = None
         try:
-            sql = """
-                select sp_guardar_evaluacion_cliente(
+            cursor = conexion.cursor()
+            
+            # Obtener todas las evaluaciones
+            sql_obtener_evaluaciones = """
+                SELECT id_evaluacion_empleado FROM Evaluacion_empleado
+            """
+            cursor.execute(sql_obtener_evaluaciones)
+            evaluaciones = cursor.fetchall()
+            
+            if not evaluaciones:
+                raise Exception("No se encontraron evaluaciones de empleados")
+            
+            # Recorrer cada evaluación y actualizar o insertar el puntaje
+            for evaluacion_row in evaluaciones:
+                evaluacion_id = evaluacion_row[0]
+                
+                sql_buscar_metrica = """
+                    SELECT Puntaje FROM Evaluacion_empleado_Metrica 
+                    WHERE id_evaluacion_empleado = %s AND Id_Metrica = 3
+                """
+                cursor.execute(sql_buscar_metrica, (evaluacion_id,))
+                resultado_metrica = cursor.fetchone()
+                
+                if resultado_metrica:
+                    puntaje_anterior = resultado_metrica[0]
+                    nuevo_puntaje = (puntaje_anterior + Decimal(str(puntaje))) / 2
+                    
+                    sql_actualizar_metrica = """
+                        UPDATE Evaluacion_empleado_Metrica 
+                        SET Puntaje = %s 
+                        WHERE id_evaluacion_empleado = %s AND Id_Metrica = 3
+                    """
+                    cursor.execute(sql_actualizar_metrica, (nuevo_puntaje, evaluacion_id))
+                    
+                else:
+                    sql_insertar_metrica = """
+                        INSERT INTO Evaluacion_empleado_Metrica (id_evaluacion_empleado, Id_Metrica, Puntaje)
+                        VALUES (%s, 3, %s)
+                    """
+                    cursor.execute(sql_insertar_metrica, (evaluacion_id, puntaje))
+            
+            sql_sp = """
+                SELECT sp_guardar_evaluacion_cliente(
                     p_id_evaluacion := %s,
                     puntaje := %s
                 );
             """
-            conexion = get_connection()
-            respuesta = None
-            with conexion.cursor() as cursor:
-                cursor.execute(sql, (id_evaluacion, puntaje))
-                respuesta = cursor.fetchone()[0]
-            conexion.commit()
-            conexion.close()
+            cursor.execute(sql_sp, (id_evaluacion, puntaje))
+            respuesta_sp = cursor.fetchone()[0]
             
-            return respuesta
+            conexion.commit()
+            return 0
+            
         except Exception as e:
+            conexion.rollback()
             print(f"Error al guardar encuesta del cliente: {e}")
             return None
+            
+        finally:
+            if cursor:
+                cursor.close()
+            conexion.close()
         
     @staticmethod
     def guardar_encuesta_empleado(id_evaluacion, id_empleado, puntaje):
+        conexion = get_connection()
+        cursor = None
         try:
-            sql = """
-                select sp_guardar_evaluacion_empleado(
+            cursor = conexion.cursor()
+            
+            # Obtener todas las evaluaciones
+            sql_buscar_evaluacion = """
+                SELECT id_evaluacion_empleado FROM Evaluacion_empleado 
+                WHERE Id_Empleado = %s
+            """
+            cursor.execute(sql_buscar_evaluacion, (id_empleado,))
+            resultado_evaluacion = cursor.fetchone()
+            
+            if not resultado_evaluacion:
+                raise Exception(f"No se encontró evaluación para el empleado {id_empleado}")
+            
+            evaluacion_id = resultado_evaluacion[0]
+            
+            # Paso 2: Verificar si existe un registro en Evaluacion_empleado_Metrica
+            sql_buscar_metrica = """
+                SELECT Puntaje FROM Evaluacion_empleado_Metrica 
+                WHERE id_evaluacion_empleado = %s AND Id_Metrica = 4
+            """
+            cursor.execute(sql_buscar_metrica, (evaluacion_id,))
+            resultado_metrica = cursor.fetchone()
+            
+            if resultado_metrica:
+                # Si existe, promediar el puntaje anterior con el nuevo
+                puntaje_anterior = resultado_metrica[0]
+                nuevo_puntaje = (puntaje_anterior + Decimal(str(puntaje))) / 2
+                
+                sql_actualizar_metrica = """
+                    UPDATE Evaluacion_empleado_Metrica 
+                    SET Puntaje = %s 
+                    WHERE id_evaluacion_empleado = %s AND Id_Metrica = 4
+                """
+                cursor.execute(sql_actualizar_metrica, (nuevo_puntaje, evaluacion_id))
+                
+            else:
+                # Si no existe, crear nuevo registro
+                sql_insertar_metrica = """
+                    INSERT INTO Evaluacion_empleado_Metrica (id_evaluacion_empleado, Id_Metrica, Puntaje)
+                    VALUES (%s, 4, %s)
+                """
+                cursor.execute(sql_insertar_metrica, (evaluacion_id, puntaje))
+            
+            # Paso 3: Ejecutar el stored procedure original (si es necesario)
+            sql_sp = """
+                SELECT sp_guardar_evaluacion_empleado(
                     p_id_evaluacion := %s,
                     p_id_empleado := %s,
                     puntaje := %s
                 );
             """
-            conexion = get_connection()
-            respuesta = None
-            with conexion.cursor() as cursor:
-                cursor.execute(sql, (id_evaluacion, id_empleado, puntaje))
-                respuesta = cursor.fetchone()[0]
-            conexion.commit()
-            conexion.close()
+            cursor.execute(sql_sp, (id_evaluacion, id_empleado, puntaje))
+            respuesta_sp = cursor.fetchone()[0]
             
-            return respuesta            
+            # Confirmar la transacción
+            conexion.commit()
+            
+            return 0
+            
         except Exception as e:
+            # Revertir la transacción en caso de error
+            conexion.rollback()
             print(f"Error al guardar encuesta del empleado: {e}")
             return None
+            
+        finally:
+            if cursor:
+                cursor.close()
+            conexion.close()
