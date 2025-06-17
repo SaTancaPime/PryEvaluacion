@@ -75,7 +75,7 @@ def encuesta(id_encuesta):
                         flash('Error al guardar la encuesta. Por favor, intente nuevamente.', 'error')
                         return redirect(url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta))
                     
-                    return redirect(url_for('encuesta_bp.index'))
+                    return redirect(url_for('encuesta_bp.exito_encuesta', id_encuesta=id_encuesta))
             else:
                 resultado_encuesta = ControlEncuesta.guardar_encuesta_cliente(id_encuesta, promedio)
                 print(resultado_encuesta)
