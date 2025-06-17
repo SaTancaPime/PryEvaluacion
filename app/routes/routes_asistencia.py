@@ -48,6 +48,7 @@ def asistencia_empleados():
             
             # Registrar asistencia
             resultado_asistencia = ControlAsistencia.registrar_asistencia(id_empleado, hora_actual)
+            # resultado_asistencia = ControlAsistencia.registrar_asistencia(id_empleado, '10:50:00')
             if resultado_asistencia == 1:
                 flash('¡Entrada registrada exitosamente! Asistencia presente.', 'success')
                 return redirect(url_for('asistencia_bp.asistencia_empleados'))
