@@ -2,10 +2,11 @@ from app.database.db import get_connection
 
 class ControlIncidente:
     @staticmethod
-    def obtener_tipos_incidente():
+    def obtener_tipo_incidente_cliente():
         try:
             sql = """
                 select id_tipoincidente, nombre_tipo, penalizacion_empleado, penalizacion_area from tipo_incidente
+                where tipo_publico = 'c'
             """
 
             conexion = get_connection()
@@ -19,6 +20,26 @@ class ControlIncidente:
         except Exception as e:
             print(f"Error al obtener tipos de incidente: {e}")
             return None
+        
+    @staticmethod
+    def obtener_tipo_incidente_empleado():
+        try:
+            sql = """
+                select id_tipoincidente, nombre_tipo, penalizacion_empleado, penalizacion_area from tipo_incidente
+                where tipo_publico = 'e' and id_tipoincidente not in (38)
+            """
+
+            conexion = get_connection()
+            tipos_incidente = []
+            with conexion.cursor() as cursor:
+                cursor.execute(sql)
+                tipos_incidente = cursor.fetchall()
+            conexion.close()
+            
+            return tipos_incidente
+        except Exception as e:
+            print(f"Error al obtener tipos de incidente: {e}")
+            return None        
         
     @staticmethod
     def agregar_incidente_cliente(id_cliente, evidencia, descripcion, id_empleado, id_tipo_incidente, id_area, id_sucursal):

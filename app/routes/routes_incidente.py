@@ -40,7 +40,7 @@ def incidente_cliente():
             sucursales = ControlSucursal.obtener_sucursales()
             areas = ControlArea.obtener_areas()
             tipos_doc = ControlTipoDoc.obtener_tipo_doc()
-            tipos = ControlIncidente.obtener_tipos_incidente()
+            tipos = ControlIncidente.obtener_tipo_incidente_cliente()
             
             if sucursales is None or areas is None or tipos_doc is None or tipos is None:
                 flash('Error al cargar datos necesarios para el formulario.', 'error')
@@ -147,7 +147,7 @@ def incidente_empleado():
             sucursales = ControlSucursal.obtener_sucursales()
             areas = ControlArea.obtener_areas()
             tipos_doc = ControlTipoDoc.obtener_tipo_doc()
-            tipos = ControlIncidente.obtener_tipos_incidente()
+            tipos = ControlIncidente.obtener_tipo_incidente_empleado()
             
             if sucursales is None or areas is None or tipos_doc is None or tipos is None:
                 flash('Error al cargar datos necesarios para el formulario.', 'error')

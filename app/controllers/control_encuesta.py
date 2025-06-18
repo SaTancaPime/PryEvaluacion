@@ -152,7 +152,7 @@ class ControlEncuesta:
             
             # Obtener todas las evaluaciones
             sql_obtener_evaluaciones = """
-                SELECT id_evaluacion_empleado FROM Evaluacion_empleado
+                SELECT id_evaluacion_empleado FROM Evaluacion_empleado where estado = true
             """
             cursor.execute(sql_obtener_evaluaciones)
             evaluaciones = cursor.fetchall()
@@ -221,7 +221,7 @@ class ControlEncuesta:
             # Obtener todas las evaluaciones
             sql_buscar_evaluacion = """
                 SELECT id_evaluacion_empleado FROM Evaluacion_empleado 
-                WHERE Id_Empleado = %s
+                WHERE Id_Empleado = %s and estado = true
             """
             cursor.execute(sql_buscar_evaluacion, (id_empleado,))
             resultado_evaluacion = cursor.fetchone()
