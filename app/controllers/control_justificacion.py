@@ -25,10 +25,13 @@ class ControlJustificacion:
     def buscar_fechas_evento(id_empleado, evento):
         try:
             sql = """
-                select fecha AT TIME ZONE 'UTC' AT TIME ZONE 'America/Lima' from asistencia 
-                where id_empleado = %s and estado_entrada = %s
-                and fecha >= current_date - interval '5 days'
-                and fecha <= current_date
+                select fecha AT TIME ZONE 'UTC' AT TIME ZONE 'America/Lima' 
+                from asistencia 
+                where id_empleado = %s and (
+                    (estado_entrada = %s and fecha >= current_date - interval '5 days' and fecha <= current_date)
+                    or
+                    (estado_entrada = '3' and fecha >= current_date)
+                );
             """
             
             conexion = get_connection()

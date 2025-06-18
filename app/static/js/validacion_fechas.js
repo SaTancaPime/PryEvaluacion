@@ -1,81 +1,12 @@
 let fechasSeleccionadas = [];
 let flatpickrInstance = null;
-   
-// Función para generar fechas futuras
-function generarFechasFuturas() {
-    const fechasFuturas = [];
-    const fechaActual = new Date();
-    for (let i = 0; i < 7; i++) {
-        const fecha = new Date(fechaActual);
-        fecha.setDate(fechaActual.getDate() + i);
-        fechasFuturas.push(fecha);
-    }
-    return fechasFuturas;
-}
-
-// Convertir fechas String a formato Date
-function convertirFechasStringADate(fechasString) {
-    return fechasString.map(fechaStr => {
-        const fecha = new Date(fechaStr);
-        fecha.setHours(0, 0, 0, 0);
-        return fecha;
-    });
-}
-
-// Función para convertir fecha de dd/mm/yyyy a yyyy-mm-dd
-function convertirFechaAFormatoISO(fechaStr) {
-    const partes = fechaStr.split('/');
-    if (partes.length === 3) {
-        const dia = partes[0].padStart(2, '0');
-        const mes = partes[1].padStart(2, '0');
-        const año = partes[2];
-        return `${año}-${mes}-${dia}`;
-    }
-    return fechaStr;
-}
-
-// Función para convertir fecha de yyyy-mm-dd a dd/mm/yyyy
-function convertirFechaAFormatoDisplay(fechaISO) {
-    const fecha = new Date(fechaISO);
-    const dia = fecha.getDate().toString().padStart(2, '0');
-    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-    const año = fecha.getFullYear();
-    return `${dia}/${mes}/${año}`;
-}
-
-// Combinar fechas pasadas y futuras
-function combinarFechasHabilitadas(fechasBD = []) {
-    const fechasFuturas = generarFechasFuturas();
-    let fechasCombinadas = [...fechasFuturas]; // Empezar con fechas futuras
-    
-    console.log('Fechas futuras generadas:', fechasFuturas.map(f => f.toLocaleDateString('es-ES')));
-    
-    // Si hay fechas de la BD, convertirlas y agregarlas
-    if (fechasBD && fechasBD.length > 0) {
-        const fechasBDConvertidas = convertirFechasStringADate(fechasBD);
-        console.log('Fechas BD convertidas:', fechasBDConvertidas.map(f => f.toLocaleDateString('es-ES')));
-        fechasCombinadas = [...fechasCombinadas, ...fechasBDConvertidas];
-    }
-    
-    // Eliminar duplicados y ordenar
-    const fechasUnicas = fechasCombinadas.filter((fecha, index, array) => {
-        return array.findIndex(f => f.getTime() === fecha.getTime()) === index;
-    });
-    
-    const fechasOrdenadas = fechasUnicas.sort((a, b) => a - b);
-    console.log('Fechas finales habilitadas:', fechasOrdenadas.map(f => f.toLocaleDateString('es-ES')));
-    
-    return fechasOrdenadas;
-}
-
+            
 // Configuración del datepicker con Flatpickr
-function inicializarFlatpickr(fechasBD = []) {
+function inicializarFlatpickr(fechasHabilitadas = []) {
     // Si ya existe una instancia, la destruimos
     if (flatpickrInstance) {
         flatpickrInstance.destroy();
     }
-
-    const fechasHabilitadas = combinarFechasHabilitadas(fechasBD);
     
     flatpickrInstance = flatpickr("#fechas-justificar-input", {
         mode: "single", // Modo single para seleccionar una fecha a la vez
@@ -145,6 +76,7 @@ async function manejarCambioTipoEvento() {
     }
 }
 
+
 // Función para agregar una fecha
 function agregarFecha(fechaStr) {
     // Verificar si la fecha ya está seleccionada
@@ -199,12 +131,10 @@ function actualizarDisplayFechas() {
     }
 }
             
-// Función para actualizar el input hidden - CORREGIDA
+// Función para actualizar el input hidden
 function actualizarInputHidden() {
     const hiddenInput = document.getElementById('fechas-justificar-hidden');
-    // Convertir todas las fechas a formato ISO antes de enviarlas
-    const fechasISO = fechasSeleccionadas.map(fecha => convertirFechaAFormatoISO(fecha));
-    hiddenInput.value = fechasISO.join(', ');
+    hiddenInput.value = fechasSeleccionadas.join(', ');
 }
             
 // Función para actualizar la validación del formulario
@@ -218,6 +148,10 @@ function actualizarValidacionFormulario() {
         inputVisible.setCustomValidity('Debe seleccionar al menos una fecha');
     }
 }
+
+// Inicializar la vista
+// actualizarDisplayFechas();
+// actualizarValidacionFormulario();
 
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar Flatpickr sin fechas específicas
