@@ -2,8 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.controllers.control_encuesta import ControlEncuesta
 from app.controllers.control_empleado import ControlEmpleado
 from app.controllers.control_tipo_doc import ControlTipoDoc
-import qrcode
-import io
+from app.utils.generador_qr import GeneradorQR
 
 encuesta_bp = Blueprint('encuesta_bp', __name__)
 
@@ -93,40 +92,6 @@ def encuesta(id_encuesta):
             print(f"Error en POST encuesta: {str(e)}")
             return redirect(url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta))
         
-
-@encuesta_bp.route('/qr/<int:id_encuesta>')
-def generar_qr_encuesta(id_encuesta):
-    try:
-        # Construir la URL completa de la encuesta
-        url_encuesta = url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta, _external=True)
-        # Crear el código QR
-        qr = qrcode.QRCode(
-            version=1,  # Controla el tamaño del QR (1 es el más pequeño)
-            error_correction=qrcode.constants.ERROR_CORRECT_L,  # ~7% de corrección de errores
-            box_size=10,  # Tamaño de cada "caja" del QR en píxeles
-            border=4,  # Grosor del borde blanco
-        )
-        qr.add_data(url_encuesta)
-        qr.make(fit=True)
-        # Crear la imagen del QR
-        img = qr.make_image(fill_color="black", back_color="white")
-        # Convertir la imagen a bytes para enviar como archivo
-        img_buffer = io.BytesIO()
-        img.save(img_buffer, format='PNG')
-        img_buffer.seek(0)
-        # Enviar el archivo para descarga
-        return send_file(
-            img_buffer, 
-            mimetype='image/png',
-            as_attachment=True,
-            download_name=f'qr_encuesta_{id_encuesta}.png'
-        )
-        
-    except Exception as e:
-        flash(f'Error al generar el código QR: {str(e)}', 'error')
-        return redirect(url_for('encuesta_bp.index'))
-    
-
 @encuesta_bp.route('/exito-encuesta/<int:id_encuesta>')
 def exito_encuesta(id_encuesta):
     try:
@@ -139,3 +104,8 @@ def exito_encuesta(id_encuesta):
     except Exception as e:
         flash('Error al cargar la encuesta. Por favor, intente nuevamente.', 'error')
         return redirect(url_for('encuesta_bp.encuesta', id_encuesta=id_encuesta))   
+    
+
+@encuesta_bp.route('/qr/<int:id_encuesta>')
+def generar_qr_encuesta(id_encuesta):
+    return GeneradorQR.qr_encuesta(id_encuesta)

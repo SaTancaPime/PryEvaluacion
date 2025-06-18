@@ -83,6 +83,97 @@
             </div>
         </div>
 
+        <!-- Tarjetas Encuestas Específicas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Encuesta Fija 1 -->
+            <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="ml-4">
+                            <h3 class="text-lg font-normal text-gray-900 line-clamp-2">Encuesta de</h3>
+                            <p class="text-2xl font-semibold text-gray-900">Incidentes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">Clientes</span>
+                    </div>
+                    <a href="{{ url_for('incidente_bp.generar_qr_incidentes_clientes') }}" 
+                       class="w-full mt-4 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 12h4.01M12 12v4.01M12 12v4.01"></path>
+                        </svg>
+                        Descargar Código QR
+                    </a>
+                </div>
+            </div>
+
+            <!-- Encuesta Fija 2 -->
+            <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="ml-4">
+                            <h3 class="text-lg font-normal text-gray-900 line-clamp-2">Encuesta de</h3>
+                            <p class="text-2xl font-semibold text-gray-900">Incidentes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">Empleados</span>
+                    </div>
+                    <a href="{{ url_for('incidente_bp.generar_qr_incidentes_empleados') }}" 
+                       class="w-full mt-4 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 12h4.01M12 12v4.01M12 12v4.01"></path>
+                        </svg>
+                        Descargar Código QR
+                    </a>
+                </div>
+            </div>
+
+            <!-- Encuesta Fija 3 -->
+            <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="ml-4">
+                            <h3 class="text-lg font-normal text-gray-900 line-clamp-2">Encuesta de</h3>
+                            <p class="text-2xl font-semibold text-gray-900">Justificación</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">Empleados</span>
+                    </div>
+                    <a href="{{ url_for('justificacion_bp.generar_qr_justificaciones') }}" 
+                       class="w-full mt-4 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 12h4.01M12 12v4.01M12 12v4.01"></path>
+                        </svg>
+                        Descargar Código QR
+                    </a>
+                </div>
+            </div>
+
+            <!-- Encuesta Fija 4 -->
+            <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="ml-4">
+                            <h3 class="text-lg font-normal text-gray-900 line-clamp-2">Encuesta de</h3>
+                            <p class="text-2xl font-semibold text-gray-900">Asistencia</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">Empleados</span>
+                    </div>
+                    <a href="{{ url_for('asistencia_bp.generar_qr_asistencia') }}" 
+                       class="w-full mt-4 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 12h4.01M12 12v4.01M12 12v4.01"></path>
+                        </svg>
+                        Descargar Código QR
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Listado de Encuestas -->
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {% for encuesta in encuestas %}

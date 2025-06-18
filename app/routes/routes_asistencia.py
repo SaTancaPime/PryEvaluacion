@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.controllers.control_asistencia import ControlAsistencia
 from app.controllers.control_empleado import ControlEmpleado
 from app.controllers.control_tipo_doc import ControlTipoDoc
+from app.utils.generador_qr import GeneradorQR
 from datetime import datetime
 
 asistencia_bp = Blueprint('asistencia_bp', __name__)
@@ -93,3 +94,8 @@ def asistencia_empleados():
             flash('Error inesperado al procesar la asistencia. Por favor, intente nuevamente.', 'error')
             print(f"Error en POST asistencia: {str(e)}")
             return redirect(url_for('asistencia_bp.asistencia_empleados'))
+        
+        
+@asistencia_bp.route('/qr-asistencia-empleados')
+def generar_qr_asistencia():
+    return GeneradorQR.qr_asistencia()

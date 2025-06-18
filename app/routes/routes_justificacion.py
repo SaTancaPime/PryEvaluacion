@@ -3,6 +3,7 @@ from app.controllers.control_justificacion import ControlJustificacion
 from app.controllers.control_empleado import ControlEmpleado
 from app.controllers.control_tipo_doc import ControlTipoDoc
 from app.services.service_dropbox import DropboxService
+from app.utils.generador_qr import GeneradorQR
 from datetime import datetime
 
 justificacion_bp = Blueprint('justificacion_bp', __name__)
@@ -178,3 +179,7 @@ def justificacion_empleado():
 @justificacion_bp.route('/exito-justificacion')
 def exito_justificacion():
     return render_template('agrad_justificacion.html')
+
+@justificacion_bp.route('/qr-justificaciones')
+def generar_qr_justificaciones():
+    return GeneradorQR.qr_justificaciones()

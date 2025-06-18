@@ -6,6 +6,7 @@ from app.controllers.control_sucursal import ControlSucursal
 from app.controllers.control_area import ControlArea
 from app.services.service_cliente import ClienteService
 from app.services.service_dropbox import DropboxService
+from app.utils.generador_qr import GeneradorQR
 
 incidente_bp = Blueprint('incidente_bp', __name__)
 
@@ -246,3 +247,12 @@ def incidente_empleado():
 @incidente_bp.route('/exito-incidente')
 def exito_incidente():
     return render_template('agrad_incidencia.html')
+
+
+@incidente_bp.route('/qr-incidentes-clientes')
+def generar_qr_incidentes_clientes():
+    return GeneradorQR.qr_incidentes_clientes()
+
+@incidente_bp.route('/qr-incidentes-empleados')
+def generar_qr_incidentes_empleados():
+    return GeneradorQR.qr_incidentes_empleados()
